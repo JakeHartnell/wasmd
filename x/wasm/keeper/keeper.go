@@ -158,6 +158,10 @@ func (k Keeper) setParams(ctx sdk.Context, ps types.Params) {
 }
 
 func (k Keeper) create(ctx sdk.Context, creator sdk.AccAddress, wasmCode []byte, instantiateAccess *types.AccessConfig, authZ AuthorizationPolicy) (codeID uint64, err error) {
+	if creator == nil {
+		return 0, sdkerrors.Wrap(sdkerrors.ErrInvalidAddress, "cannot be nil")
+	}
+
 	if !authZ.CanCreateCode(k.getUploadAccessConfig(ctx), creator) {
 		return 0, sdkerrors.Wrap(sdkerrors.ErrUnauthorized, "can not create code")
 	}
@@ -281,7 +285,7 @@ func (k Keeper) instantiate(ctx sdk.Context, codeID uint64, creator, admin sdk.A
 	res, gasUsed, err := k.wasmVM.Instantiate(codeInfo.CodeHash, env, info, initMsg, prefixStore, cosmwasmAPI, querier, k.gasMeter(ctx), gas, costJsonDeserialization)
 	k.consumeRuntimeGas(ctx, gasUsed)
 	if err != nil {
-		return contractAddress, nil, sdkerrors.Wrap(types.ErrInstantiateFailed, err.Error())
+		return nil, nil, sdkerrors.Wrap(types.ErrInstantiateFailed, err.Error())
 	}
 
 	// persist instance first
@@ -291,7 +295,7 @@ func (k Keeper) instantiate(ctx sdk.Context, codeID uint64, creator, admin sdk.A
 	// check for IBC flag
 	report, err := k.wasmVM.AnalyzeCode(codeInfo.CodeHash)
 	if err != nil {
-		return contractAddress, nil, sdkerrors.Wrap(types.ErrInstantiateFailed, err.Error())
+		return nil, nil, sdkerrors.Wrap(types.ErrInstantiateFailed, err.Error())
 	}
 	if report.HasIBCEntryPoints {
 		// register IBC port
@@ -473,23 +477,20 @@ func (k Keeper) Sudo(ctx sdk.Context, contractAddress sdk.AccAddress, msg []byte
 }
 
 // reply is only called from keeper internal functions (dispatchSubmessages) after processing the submessage
-// it
 func (k Keeper) reply(ctx sdk.Context, contractAddress sdk.AccAddress, reply wasmvmtypes.Reply) ([]byte, error) {
 	contractInfo, codeInfo, prefixStore, err := k.contractInstance(ctx, contractAddress)
 	if err != nil {
 		return nil, err
 	}
 
-	replyCosts := k.gasRegister.ReplyCosts(k.IsPinnedCode(ctx, contractInfo.CodeID), reply)
+	// always consider this pinned
+	replyCosts := k.gasRegister.ReplyCosts(true, reply)
 	ctx.GasMeter().ConsumeGas(replyCosts, "Loading CosmWasm module: reply")
 
 	env := types.NewEnv(ctx, contractAddress)
 
 	// prepare querier
-	querier := QueryHandler{
-		Ctx:     ctx,
-		Plugins: k.wasmVMQueryHandler,
-	}
+	querier := k.newQueryHandler(ctx, contractAddress)
 	gas := k.runtimeGasForContract(ctx)
 	res, gasUsed, execErr := k.wasmVM.Reply(codeInfo.CodeHash, env, reply, prefixStore, cosmwasmAPI, querier, k.gasMeter(ctx), gas, costJsonDeserialization)
 	k.consumeRuntimeGas(ctx, gasUsed)

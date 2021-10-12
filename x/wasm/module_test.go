@@ -31,9 +31,8 @@ type testData struct {
 	stakingKeeper stakingkeeper.Keeper
 }
 
-// returns a cleanup function, which must be defered on
 func setupTest(t *testing.T) testData {
-	ctx, keepers := CreateTestInput(t, false, "staking,stargate")
+	ctx, keepers := CreateTestInput(t, false, "iterator,staking,stargate")
 	cdc := keeper.MakeTestCodec(t)
 	data := testData{
 		module:        NewAppModule(cdc, keepers.WasmKeeper, keepers.StakingKeeper),

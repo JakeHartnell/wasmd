@@ -40,8 +40,8 @@ import (
 // WasmApp testing.
 var DefaultConsensusParams = &abci.ConsensusParams{
 	Block: &abci.BlockParams{
-		MaxBytes: 200000,
-		MaxGas:   2000000,
+		MaxBytes: 8000000,
+		MaxGas:   80000000,
 	},
 	Evidence: &tmproto.EvidenceParams{
 		MaxAgeNumBlocks: 302400,
