@@ -581,7 +581,7 @@ func (app *WasmApp) ModuleAccountAddrs() map[string]bool {
 //
 // NOTE: This is solely to be used for testing purposes as it may be desirable
 // for modules to register their own custom testing types.
-func (app *WasmApp) LegacyAmino() *codec.LegacyAmino { //nolint
+func (app *WasmApp) LegacyAmino() *codec.LegacyAmino { //nolint:staticcheck
 	return app.legacyAmino
 }
 
@@ -655,7 +655,7 @@ func GetMaccPerms() map[string][]string {
 }
 
 // initParamsKeeper init params keeper and its subspaces
-func initParamsKeeper(appCodec codec.BinaryCodec, legacyAmino *codec.LegacyAmino, key, tkey sdk.StoreKey) paramskeeper.Keeper {
+func initParamsKeeper(appCodec codec.BinaryCodec, legacyAmino *codec.LegacyAmino, key, tkey sdk.StoreKey) paramskeeper.Keeper { //nolint:staticcheck
 	paramsKeeper := paramskeeper.NewKeeper(appCodec, legacyAmino, key, tkey)
 
 	paramsKeeper.Subspace(authtypes.ModuleName)

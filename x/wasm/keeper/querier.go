@@ -27,7 +27,7 @@ type grpcQuerier struct {
 }
 
 // NewGrpcQuerier constructor
-func NewGrpcQuerier(cdc codec.Codec, storeKey sdk.StoreKey, keeper types.ViewKeeper, queryGasLimit sdk.Gas) *grpcQuerier {
+func NewGrpcQuerier(cdc codec.Codec, storeKey sdk.StoreKey, keeper types.ViewKeeper, queryGasLimit sdk.Gas) *grpcQuerier { //nolint:revive
 	return &grpcQuerier{cdc: cdc, storeKey: storeKey, keeper: keeper, queryGasLimit: queryGasLimit}
 }
 
