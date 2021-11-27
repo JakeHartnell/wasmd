@@ -19,7 +19,7 @@ var emptyWasmOpts []wasm.Option = nil
 
 func TestWasmdExport(t *testing.T) {
 	db := db.NewMemDB()
-	gapp := NewWasmApp(log.NewTMLogger(log.NewSyncWriter(os.Stdout)), db, nil, true, map[int64]bool{}, DefaultNodeHome, 0, wasm.EnableAllProposals, emptyWasmOpts{}, emptyWasmOpts)
+	gapp := NewWasmApp(log.NewTMLogger(log.NewSyncWriter(os.Stdout)), db, nil, true, map[int64]bool{}, DefaultNodeHome, 0, wasm.EnableAllProposals, EmptyBaseAppOptions{}, emptyWasmOpts)
 
 	genesisState := NewDefaultGenesisState()
 	stateBytes, err := json.MarshalIndent(genesisState, "", "  ")
