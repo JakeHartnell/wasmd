@@ -3,7 +3,7 @@ version: 2.1
 executors:
   golang:
     docker:
-      - image: circleci/golang:1.16
+      - image: circleci/golang:1.17
     working_directory: /go/src/github.com/cosmwasm/wasmd
 
 commands:
@@ -59,6 +59,18 @@ jobs:
           key: go-src-v1-{{ .Revision }}
           paths:
             - ".git"
+
+  lint:
+    executor: golang
+    docker:
+      - image: golangci/golangci-lint:v1.42.1-alpine
+    steps:
+      - checkout
+      - run:
+          name: Lint
+          command: |
+            golangci-lint run --version
+            golangci-lint run --tests=false --timeout=5m0s
 
   test-cover:
     executor: golang
@@ -191,6 +203,9 @@ workflows:
             tags:
               only:
                 - /^v.*/
+      - lint:
+          requires:
+            - setup-dependencies
       - test-cover:
           requires:
             - setup-dependencies

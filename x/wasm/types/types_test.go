@@ -1,11 +1,11 @@
 package types
 
 import (
+	"context"
 	"strings"
 	"testing"
 	"time"
 
-	"context"
 	wasmvmtypes "github.com/CosmWasm/wasmvm/types"
 	"github.com/cosmos/cosmos-sdk/codec"
 	"github.com/cosmos/cosmos-sdk/codec/types"

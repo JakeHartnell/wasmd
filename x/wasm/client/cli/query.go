@@ -10,12 +10,13 @@ import (
 	"io/ioutil"
 	"strconv"
 
-	"github.com/CosmWasm/wasmd/x/wasm/types"
 	"github.com/cosmos/cosmos-sdk/client"
 	"github.com/cosmos/cosmos-sdk/client/flags"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/spf13/cobra"
 	flag "github.com/spf13/pflag"
+
+	"github.com/CosmWasm/wasmd/x/wasm/types"
 )
 
 func GetQueryCmd() *cobra.Command {
@@ -150,7 +151,7 @@ func GetCmdQueryCode() *cobra.Command {
 			}
 
 			fmt.Printf("Downloading wasm code to %s\n", args[1])
-			return ioutil.WriteFile(args[1], res.Data, 0644)
+			return ioutil.WriteFile(args[1], res.Data, 0600)
 		},
 	}
 	flags.AddQueryFlagsToCmd(cmd)
@@ -473,6 +474,9 @@ func withPageKeyDecoded(flagSet *flag.FlagSet) *flag.FlagSet {
 	if err != nil {
 		panic(err.Error())
 	}
-	flagSet.Set(flags.FlagPageKey, string(raw))
+	err = flagSet.Set(flags.FlagPageKey, string(raw))
+	if err != nil {
+		panic(err.Error())
+	}
 	return flagSet
 }

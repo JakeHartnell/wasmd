@@ -4,6 +4,7 @@ import (
 	"testing"
 
 	"encoding/json"
+
 	"github.com/CosmWasm/wasmd/x/wasm/types"
 
 	wasmvmtypes "github.com/CosmWasm/wasmvm/types"

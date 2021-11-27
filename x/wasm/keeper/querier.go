@@ -9,11 +9,12 @@ import (
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
 
-	"github.com/CosmWasm/wasmd/x/wasm/types"
 	"github.com/cosmos/cosmos-sdk/store/prefix"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
 	"github.com/cosmos/cosmos-sdk/types/query"
+
+	"github.com/CosmWasm/wasmd/x/wasm/types"
 )
 
 var _ types.QueryServer = &grpcQuerier{}
@@ -162,6 +163,9 @@ func (q grpcQuerier) RawContractState(c context.Context, req *types.QueryRawCont
 func (q grpcQuerier) SmartContractState(c context.Context, req *types.QuerySmartContractStateRequest) (rsp *types.QuerySmartContractStateResponse, err error) {
 	if req == nil {
 		return nil, status.Error(codes.InvalidArgument, "empty request")
+	}
+	if err := req.QueryData.ValidateBasic(); err != nil {
+		return nil, status.Error(codes.InvalidArgument, "invalid query data")
 	}
 	contractAddr, err := sdk.AccAddressFromBech32(req.Address)
 	if err != nil {

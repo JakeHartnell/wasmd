@@ -1,4 +1,4 @@
-package wasm_test
+package wasm
 
 import (
 	"encoding/json"
@@ -254,7 +254,7 @@ func TestContractCanEmulateIBCTransferMessageWithTimeout(t *testing.T) {
 	timeoutTime := chainB.LastHeader.Header.Time.Add(time.Nanosecond)
 	timeout := uint64(timeoutTime.UnixNano())
 
-	// custom payload data to be transfered into a proper ICS20 ibc packet
+	// custom payload data to be transferred into a proper ICS20 ibc packet
 	startMsg := &types.MsgExecuteContract{
 		Sender:   chainA.SenderAccount.GetAddress().String(),
 		Contract: myContractAddr.String(),
@@ -442,7 +442,7 @@ type startTransfer struct {
 	Timeout         uint64
 }
 
-func (g startTransfer) GetBytes() json.RawMessage {
+func (g startTransfer) GetBytes() types.RawContractMessage {
 	b, err := json.Marshal(g)
 	if err != nil {
 		panic(err)
