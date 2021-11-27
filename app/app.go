@@ -188,11 +188,6 @@ var (
 		ibctransfertypes.ModuleName:    {authtypes.Minter, authtypes.Burner},
 		wasm.ModuleName:                {authtypes.Burner},
 	}
-
-	// module accounts that are allowed to receive tokens
-	allowedReceivingModAcc = map[string]bool{
-		distrtypes.ModuleName: true,
-	}
 )
 
 // Verify app interface at compile time
@@ -586,7 +581,7 @@ func (app *WasmApp) ModuleAccountAddrs() map[string]bool {
 //
 // NOTE: This is solely to be used for testing purposes as it may be desirable
 // for modules to register their own custom testing types.
-func (app *WasmApp) LegacyAmino() *codec.LegacyAmino {
+func (app *WasmApp) LegacyAmino() *codec.LegacyAmino { //nolint
 	return app.legacyAmino
 }
 

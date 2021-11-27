@@ -10,7 +10,7 @@ import (
 
 	"github.com/CosmWasm/wasmd/x/wasm/types"
 	sdk "github.com/cosmos/cosmos-sdk/types"
-	"github.com/golang/protobuf/proto"
+	"github.com/golang/protobuf/proto" //nolint
 	"github.com/stretchr/testify/require"
 	abci "github.com/tendermint/tendermint/abci/types"
 )
@@ -126,3 +126,4 @@ func (c *TestChain) parseSDKResultData(r *sdk.Result) sdk.TxMsgData {
 	require.NoError(c.t, proto.Unmarshal(r.Data, &protoResult))
 	return protoResult
 }
+

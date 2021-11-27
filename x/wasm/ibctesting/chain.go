@@ -270,7 +270,10 @@ func (chain *TestChain) SendMsgs(msgs ...sdk.Msg) (*sdk.Result, error) {
 	chain.NextBlock()
 
 	// increment sequence for successful transaction execution
-	chain.SenderAccount.SetSequence(chain.SenderAccount.GetSequence() + 1)
+	err = chain.SenderAccount.SetSequence(chain.SenderAccount.GetSequence() + 1)
+	if err != nil {
+		return nil, err
+	}
 
 	chain.Coordinator.IncrementTime()
 
@@ -314,6 +317,19 @@ func getAckPackets(evts []abci.Event) []PacketAck {
 	}
 	return res
 }
+
+
+
+
+
+
+// Used for various debug statements above when needed... do not remove
+// func showEvent(evt abci.Event) {
+//	fmt.Printf("evt.Type: %s\n", evt.Type)
+//	for _, attr := range evt.Attributes {
+//		fmt.Printf("  %s = %s\n", string(attr.Key), string(attr.Value))
+//	}
+//}
 
 func parsePacketFromEvent(evt abci.Event) channeltypes.Packet {
 	return channeltypes.Packet{
@@ -506,11 +522,9 @@ func (chain *TestChain) CreateTMClientHeader(chainID string, blockHeight int64, 
 		Commit: commit.ToProto(),
 	}
 
-	if tmValSet != nil {
-		valSet, err = tmValSet.ToProto()
-		if err != nil {
-			panic(err)
-		}
+	valSet, err = tmValSet.ToProto()
+	if err != nil {
+		panic(err)
 	}
 
 	if tmTrustedVals != nil {
