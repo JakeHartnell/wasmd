@@ -558,7 +558,9 @@ func (k Keeper) appendToContractHistory(ctx sdk.Context, contractAddr sdk.AccAdd
 	for _, e := range newEntries {
 		pos++
 		key := types.GetContractCodeHistoryElementKey(contractAddr, pos)
-		store.Set(key, k.cdc.MustMarshal(&e))
+		// the silly eee is because of this: https://stackoverflow.com/questions/62446118/implicit-memory-aliasing-in-for-loop/68247837
+		eee := e
+		store.Set(key, k.cdc.MustMarshal(&eee))
 	}
 }
 
