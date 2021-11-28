@@ -490,7 +490,6 @@ func TestMsgMigrateContract(t *testing.T) {
 	}
 }
 
-
 // Removed in the "clean" 0.44.3 upgrade, not certain this is safe.  -Jacob
 /*
 func TestMsgJsonSignBytes(t *testing.T) {
